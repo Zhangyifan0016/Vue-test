@@ -6,7 +6,7 @@ const instance = axios.create({
   timeout: 5000
 })
 // 请求拦截器
-axios.interceptors.request.use(
+instance.interceptors.request.use(
   function (config) {
     return config
   },
@@ -16,7 +16,7 @@ axios.interceptors.request.use(
 )
 
 // 响应拦截器
-axios.interceptors.response.use(
+instance.interceptors.response.use(
   function (response) {
     return response
   },
@@ -24,3 +24,13 @@ axios.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+// 封装 处理get请求方式的参数问题
+function request(options) {
+  options.method = options.method || 'get'
+  if (options.method.toLowerCase() === 'get') {
+    options.params = options.data
+  }
+  return instance(options)
+}
+
+export default request
