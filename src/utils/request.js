@@ -18,7 +18,12 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   function (response) {
-    return response
+    const { data } = response
+    if (data.code === 200) {
+      return data
+    } else if (data.code === 400) {
+      return data
+    }
   },
   function (error) {
     return Promise.reject(error)
