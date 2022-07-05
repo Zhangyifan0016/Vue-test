@@ -22,7 +22,7 @@
           <el-input v-model="loginForm.password" type="password" />
         </el-form-item>
         <el-form-item label="验证码" prop="captcha">
-          <el-input class="code" v-model="loginForm.captcha" />
+          <el-input class="code" v-model="loginForm.code" />
           <el-image class="imgcode" @click="resetImgcode" :src="url" />
         </el-form-item>
         <el-form-item>
@@ -38,11 +38,27 @@ import { ElMessage } from 'element-plus'
 import { getImgCode } from '../../api/Imgcode'
 import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 const store = useStore()
+const router = useRouter()
+const url = ref(null)
+
+const getCaptcha = async () => {
+  const res = await store.dispatch('user/getCaptcha')
+  console.log(res)
+  url.value = res.data.data.captchaImg
+  loginForm.token = res.data.data.token
+}
+getCaptcha()
+// 点击图片刷新验证码
+const resetImgcode = () => {
+  getCaptcha()
+}
 const loginForm = reactive({
   username: 'test',
   password: '',
-  captcha: ''
+  code: '',
+  token: ''
 })
 // 表单校验
 const loginRules = reactive({
@@ -60,7 +76,7 @@ const loginRules = reactive({
       message: '请输入密码'
     }
   ],
-  captcha: [
+  code: [
     {
       required: true,
       trigger: 'blur',
@@ -68,16 +84,16 @@ const loginRules = reactive({
     }
   ]
 })
-//
-const loginRef = ref(null)
 
+const loginRef = ref(null)
 const submitForm = () => {
   loginRef.value.validate(async (valid) => {
     if (!valid) return
     if (valid) {
       const res = await store.dispatch('user/login', loginForm)
       console.log(res)
-      if (res.code === 200) {
+      if (res.data.code === 200) {
+        router.push('/')
         ElMessage({
           type: 'success',
           message: '登陆成功'
@@ -85,17 +101,6 @@ const submitForm = () => {
       }
     }
   })
-}
-const url = ref(null)
-const getCaptcha = async () => {
-  const res = await store.dispatch('user/getCaptcha')
-  console.log(res)
-  url.value = res.data.captchaImg
-}
-getCaptcha()
-// 点击图片刷新验证码
-const resetImgcode = () => {
-  getCaptcha()
 }
 </script>
 <style scoped lang="scss">

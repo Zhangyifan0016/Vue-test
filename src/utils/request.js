@@ -1,6 +1,7 @@
 // 引入axios
 import axios from 'axios'
-
+// 引入store
+import store from '../store'
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
   timeout: 5000
@@ -8,6 +9,10 @@ const instance = axios.create({
 // 请求拦截器
 instance.interceptors.request.use(
   function (config) {
+    const token = store.getters.token
+    if (token) {
+      config.headers.authorization = token
+    }
     return config
   },
   function (error) {
@@ -18,12 +23,13 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   function (response) {
-    const { data } = response
-    if (data.code === 200) {
-      return data
-    } else if (data.code === 400) {
-      return data
-    }
+    // const res = response.data
+    // if (res.code === 200) {
+    //   return res
+    // } else if (res.code === 400) {
+    //   return res
+    // }
+    return response
   },
   function (error) {
     return Promise.reject(error)
