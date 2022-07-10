@@ -49,6 +49,11 @@ const handleSelectTag = (path) => {
 }
 const handleCloseTag = (index) => {
   store.commit('tagsview/removeTagItem', index)
+  const tagsView = store.getters.tagsview
+  const path = tagsView[index]
+    ? tagsView[index].path
+    : tagsView[tagsView.length - 1].path
+  router.push(path)
 }
 </script>
 <style scoped lang="scss">

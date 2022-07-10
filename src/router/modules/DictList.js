@@ -9,7 +9,7 @@ export default {
   },
   children: [
     {
-      path: '/sys/dicts',
+      path: '/tools/dicts',
       component: () => import('../../views/sysDictList'),
       meta: {
         title: '数字字典',
